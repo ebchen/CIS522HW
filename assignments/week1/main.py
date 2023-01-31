@@ -59,3 +59,6 @@ def main():
 
     # Print the mean squared error:
     print("Mean squared error: {:.2f}".format(mse))
+
+
+main()
