@@ -87,13 +87,13 @@ def test_epochs_improve_fit():
 
     lr = GradientDescentLinearRegression()
     lr.fit(X, y, epochs=10)
-    #print the prediction
+    # print the prediction
     print("10 epochs: ", lr.predict(X))
     mse1 = mse(y, lr.predict(X))
 
     lr = GradientDescentLinearRegression()
     lr.fit(X, y, epochs=1000)
-    #print the prediction
+    # print the prediction
     print("1000 epochs: ", lr.predict(X))
     mse2 = mse(y, lr.predict(X))
 
