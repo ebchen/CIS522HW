@@ -66,6 +66,7 @@ class GradientDescentLinearRegression(LinearRegression):
         X_new = np.hstack((np.ones((X.shape[0], 1)), X))
         self.w = np.random.randn(X_new.shape[1])
         self.b = np.random.randn()
+
         for i in range(epochs):
             y_pred = X_new @ self.w + self.b
             errors = y - y_pred
