@@ -34,7 +34,11 @@ class MLP(torch.nn.Module):
             layer = torch.nn.Linear(input_size, hidden_size)
             initializer(layer.weight)
             self.layers += [layer]
-            # self.layers += [torch.nn.BatchNorm1d(hidden_size)]
+            self.layers += [torch.nn.BatchNorm1d(hidden_size)]
+            if i % 2 == 0:
+                self.layers += [torch.nn.ReLU()]
+            else:
+                self.layers += [torch.nn.Sigmoid()]
             self.layers += [torch.nn.Dropout(0.5)]
             input_size = hidden_size
 
