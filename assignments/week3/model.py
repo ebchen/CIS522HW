@@ -49,7 +49,6 @@ class MLP(torch.nn.Module):
             The output of the network.
         """
         for layer in self.layers:
-          x = self.actv(layer(x))
+            x = self.actv(layer(x))
         x = self.out(x)
         return x
-
