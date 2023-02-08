@@ -29,17 +29,15 @@ class MLP(torch.nn.Module):
         super(MLP, self).__init__()
         self.layers = torch.nn.ModuleList()
         self.actv = activation()
-        #include dropout layers
+        # include dropout layers
         for i in range(hidden_count):
             layer = torch.nn.Linear(input_size, hidden_size)
             initializer(layer.weight)
             self.layers += [layer]
-            #inclyde dropout layer
+            self.layers += [torch.nn.BatchNorm1d(hidden_size)]
             self.layers += [torch.nn.Dropout(0.5)]
             input_size = hidden_size
 
-
-        # self.actv = torch.nn.Softmax()
         self.out = torch.nn.Linear(hidden_size, num_classes)
         initializer(self.out.weight)
 
