@@ -10,7 +10,16 @@ class CustomLRScheduler(_LRScheduler):
     A custom learning rate scheduler.
     I am implementing cyclical learning rate.
     """
-    def __init__(self, optimizer, base_lr=0.001, max_lr=0.01, step_size=2000, gamma=1.0, last_epoch=-1):
+
+    def __init__(
+        self,
+        optimizer,
+        base_lr=0.001,
+        max_lr=0.01,
+        step_size=2000,
+        gamma=1.0,
+        last_epoch=-1,
+    ):
         """
         Create a new scheduler.
 
@@ -36,7 +45,9 @@ class CustomLRScheduler(_LRScheduler):
         # ... Your Code Here ...
         self.cycle = math.floor(1 + self.last_epoch / (2 * self.step_size))
         x = abs(self.last_epoch / self.step_size - 2 * self.cycle + 1)
-        lr = self.base_lr + (self.max_lr - self.base_lr) * max(0, (1 - x)) * (self.gamma ** self.last_epoch)
+        lr = self.base_lr + (self.max_lr - self.base_lr) * max(0, (1 - x)) * (
+            self.gamma**self.last_epoch
+        )
         self.last_lr = lr
         return [lr for _ in self.optimizer.param_groups]
         # Here's our dumb baseline implementation:
