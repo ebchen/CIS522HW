@@ -37,7 +37,7 @@ class CustomLRScheduler(_LRScheduler):
 
     def get_lr(self) -> List[float]:
         """
-        Get the learning rate list
+        Get the learning rate list.
         """
         # Note to students: You CANNOT change the arguments or return type of
         # this function (because it is called internally by Torch)
