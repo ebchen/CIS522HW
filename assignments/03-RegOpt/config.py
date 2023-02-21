@@ -2,20 +2,19 @@ from typing import Callable
 import torch
 import torch.optim
 import torch.nn as nn
-from torchvision.transforms import Compose, Normalize, ToTensor
+from torchvision.transforms import Compose, ToTensor
 
 
 class CONFIG:
     batch_size = 64
-    num_epochs = 8
-    initial_learning_rate = 0.1
+    num_epochs = 10
+    initial_learning_rate = 0.001
     initial_weight_decay = 0
 
     lrs_kwargs = {
-        "gamma": 0.999,
         "base_lr": 0.001,
-        "max_lr": 0.1,
-        "step_size": 3000,
+        "warming_mode": "linear",
+        "cooling_mode": "exponential",
     }
 
     optimizer_factory: Callable[

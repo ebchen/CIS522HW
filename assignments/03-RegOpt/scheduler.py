@@ -1,5 +1,6 @@
 import math
 from typing import List
+import random
 
 
 from torch.optim.lr_scheduler import _LRScheduler
@@ -14,11 +15,13 @@ class CustomLRScheduler(_LRScheduler):
     def __init__(
         self,
         optimizer,
+        last_epoch=-1,
+        step_size=400,
         base_lr=0.001,
         max_lr=0.01,
-        step_size=2000,
-        gamma=1.0,
-        last_epoch=-1,
+        gamma=0.999,
+        warming_mode="linear",
+        cooling_mode="exponential",
     ):
         """
         Create a new scheduler.
@@ -27,28 +30,70 @@ class CustomLRScheduler(_LRScheduler):
         if you need to add new parameters.
 
         """
+        self.step_size = step_size
         self.base_lr = base_lr
         self.max_lr = max_lr
-        self.step_size = step_size
+        self.warming_mode = warming_mode
+        self.cooling_mode = cooling_mode
         self.gamma = gamma
-        self.cycle = 0
-        self.last_lr = 0
+
+        self.base_stage_size = step_size * 3
+        self.warmup_stage_size = step_size
+        self.cooling_stage_size = step_size * 2
+        self.total_period = (
+            self.base_stage_size + self.warmup_stage_size + self.cooling_stage_size
+        )
+
+        super().__init__(optimizer, last_epoch)
+
         super(CustomLRScheduler, self).__init__(optimizer, last_epoch)
 
     def get_lr(self) -> List[float]:
         """
-        Get the learning rate list.
+        Get the learning rate.
         """
-        # Note to students: You CANNOT change the arguments or return type of
-        # this function (because it is called internally by Torch)
+        lrs = []
+        current_step = self.last_epoch % self.total_period
+        if current_step < self.base_stage_size:
+            lrs = [self.base_lr for element in self.optimizer.param_groups]
+        elif current_step < self.base_stage_size + self.warmup_stage_size:
+            if self.warming_mode == "exponential":
+                lrs = [
+                    self.base_lr
+                    + (self.max_lr - self.base_lr)
+                    * (self.gamma ** (current_step - self.base_stage_size))
+                    for _ in self.optimizer.param_groups
+                ]
+            else:
+                lrs = [
+                    self.base_lr
+                    + (self.max_lr - self.base_lr)
+                    * abs(
+                        current_step % self.warmup_stage_size / self.warmup_stage_size
+                    )
+                    for _ in self.optimizer.param_groups
+                ]
+        else:
+            if self.cooling_mode == "exponential":
+                lrs = [
+                    self.max_lr
+                    - (self.max_lr - self.base_lr)
+                    * (
+                        self.gamma
+                        ** (
+                            current_step - self.base_stage_size - self.warmup_stage_size
+                        )
+                    )
+                    for _ in self.optimizer.param_groups
+                ]
+            else:
+                lrs = [
+                    self.max_lr
+                    - (self.max_lr - self.base_lr)
+                    * abs(
+                        current_step % self.cooling_stage_size / self.cooling_stage_size
+                    )
+                    for _ in self.optimizer.param_groups
+                ]
 
-        # ... Your Code Here ...
-        self.cycle = math.floor(1 + self.last_epoch / (2 * self.step_size))
-        x = abs(self.last_epoch / self.step_size - 2 * self.cycle + 1)
-        lr = self.base_lr + (self.max_lr - self.base_lr) * max(0, (1 - x)) * (
-            self.gamma**self.last_epoch
-        )
-        self.last_lr = lr
-        return [lr for _ in self.optimizer.param_groups]
-        # Here's our dumb baseline implementation:
-        # return [i for i in self.base_lrs]
+        return lrs
