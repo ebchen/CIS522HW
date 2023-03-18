@@ -2,11 +2,11 @@
     "assignment_name": "Convolutions",
     "contributors": [
         {
-            "name": "Change this to your name",
-            "pennkey": "MyPennKey"
+            "name": "Eric Chen",
+            "pennkey": "ebchen"
         }
     ],
     "sources": [
-        "Don't forget to list your sources/attribution here!"
+        "torch documentation"
     ]
 }
