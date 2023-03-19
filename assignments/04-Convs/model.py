@@ -29,11 +29,11 @@ class Model(torch.nn.Module):
         self.relu2 = nn.ReLU(inplace=True)
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
-        self.fc1 = nn.Linear(64 * 16 * 16, 256)
+        self.fc1 = nn.Linear(64 * 16 * 16, 128)
         self.relu4 = nn.ReLU(inplace=True)
         self.dropout1 = nn.Dropout(0.5)
 
-        self.fc2 = nn.Linear(256, num_classes)
+        self.fc2 = nn.Linear(128, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -46,6 +46,7 @@ class Model(torch.nn.Module):
             The output of the network.
         """
         x = self.relu1(self.norm1(self.conv1(x)))
+        # x = self.relu1(self.conv1(x))
         x = self.pool1(self.relu2(self.norm2(self.conv2(x))))
         # x = self.pool2(self.relu3(self.norm3(self.conv3(x))))
 
