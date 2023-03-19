@@ -24,16 +24,16 @@ class Model(torch.nn.Module):
         self.norm1 = nn.BatchNorm2d(32)
         self.relu1 = nn.ReLU(inplace=True)
 
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
-        self.norm2 = nn.BatchNorm2d(64)
+        self.conv2 = nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1)
+        self.norm2 = nn.BatchNorm2d(32)
         self.relu2 = nn.ReLU(inplace=True)
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
-        self.fc1 = nn.Linear(64 * 16 * 16, 128)
+        self.fc1 = nn.Linear(32 * 16 * 16, 64)
         self.relu4 = nn.ReLU(inplace=True)
         self.dropout1 = nn.Dropout(0.5)
 
-        self.fc2 = nn.Linear(128, num_classes)
+        self.fc2 = nn.Linear(64, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
