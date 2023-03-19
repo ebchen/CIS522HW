@@ -29,11 +29,11 @@ class Model(torch.nn.Module):
         self.relu2 = nn.ReLU(inplace=True)
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
 
-        self.fc1 = nn.Linear(64 * 16 * 16, 512)  # Update the dimensions here
+        self.fc1 = nn.Linear(64 * 16 * 16, 256)
         self.relu4 = nn.ReLU(inplace=True)
         self.dropout1 = nn.Dropout(0.5)
 
-        self.fc2 = nn.Linear(512, num_classes)
+        self.fc2 = nn.Linear(256, num_classes)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """

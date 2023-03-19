@@ -6,8 +6,8 @@ from torchvision.transforms import Compose, ToTensor
 
 
 class CONFIG:
-    batch_size = 8
-    num_epochs = 8
+    batch_size = 6
+    num_epochs = 6
 
     optimizer_factory: Callable[
         [nn.Module], torch.optim.Optimizer
