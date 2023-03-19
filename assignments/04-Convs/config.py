@@ -13,7 +13,9 @@ class CONFIG:
         [nn.Module], torch.optim.Optimizer
     ] = lambda model: torch.optim.AdamW(model.parameters(), lr=1e-3)
 
-    transforms = Compose([
-        RandomHorizontalFlip(),
-        ToTensor(),
-    ])
+    transforms = Compose(
+        [
+            RandomHorizontalFlip(),
+            ToTensor(),
+        ]
+    )

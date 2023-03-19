@@ -35,6 +35,8 @@ class Model(torch.nn.Module):
 
         self.fc2 = nn.Linear(64, num_classes)
 
+        self.fc3 = nn.Linear(32 * 16 * 16, num_classes)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass of the network.
@@ -50,8 +52,9 @@ class Model(torch.nn.Module):
 
         x = x.view(x.size(0), -1)
 
-        x = self.relu4(self.fc1(x))
-        x = self.dropout1(x)
-        x = self.fc2(x)
+        # x = self.relu4(self.fc1(x))
+        # x = self.dropout1(x)
+        # x = self.fc2(x)
+        x = self.fc3(x)
 
         return x
