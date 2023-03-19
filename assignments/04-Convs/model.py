@@ -46,9 +46,7 @@ class Model(torch.nn.Module):
             The output of the network.
         """
         x = self.relu1(self.norm1(self.conv1(x)))
-        # x = self.relu1(self.conv1(x))
         x = self.pool1(self.relu2(self.norm2(self.conv2(x))))
-        # x = self.pool2(self.relu3(self.norm3(self.conv3(x))))
 
         x = x.view(x.size(0), -1)
 
