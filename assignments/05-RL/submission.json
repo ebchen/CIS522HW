@@ -2,11 +2,11 @@
     "assignment_name": "RL",
     "contributors": [
         {
-            "name": "Change this to your name",
-            "pennkey": "MyPennKey"
+            "name": "Eric Chen",
+            "pennkey": "ebchen"
         }
     ],
     "sources": [
-        "Don't forget to list your sources/attribution here!"
+        "Stackoverflow, CoPilot"
     ]
 }
