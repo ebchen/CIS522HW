@@ -1,5 +1,4 @@
 import gymnasium as gym
-import gym.spaces
 import torch
 import torch.nn as nn
 import torch.optim as optim
