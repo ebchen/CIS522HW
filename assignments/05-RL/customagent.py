@@ -65,7 +65,7 @@ class Agent:
         self.loss_fn = nn.MSELoss()
         self.buffer = deque(maxlen=200000)  # TODO: tune this
         self.gamma = 0.99
-        self.batch_size = 64  # TODO: tune this
+        self.batch_size = 128  # TODO: tune this
         self.epsilon = 1.0
         self.epsilon_decay = 0.9995  # TODO: tune this
         self.epsilon_min = 0.05
