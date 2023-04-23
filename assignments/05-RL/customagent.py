@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
-import random
 from collections import deque
 
 
@@ -50,11 +49,11 @@ class DQN(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(input_dim, 512),
             nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
             nn.Linear(512, 256),
             nn.ReLU(),
-            nn.Linear(256, 128),
-            nn.ReLU(),
-            nn.Linear(128, output_dim),
+            nn.Linear(256, output_dim),
         )
 
         for layer in self.fc:
