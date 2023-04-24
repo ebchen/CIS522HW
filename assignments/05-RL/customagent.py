@@ -104,11 +104,11 @@ class Agent:
         self.gradient_clip = 1.0
 
         self.gamma = 0.99
-        self.batch_size = 128  # TODO: tune this
+        self.batch_size = 256  # TODO: tune this
         self.epsilon = 1.0
         self.epsilon_decay = 0.995  # TODO: tune this
         self.epsilon_min = 0.03
-        self.update_freq = 500  # TODO: tune this
+        self.update_freq = 50  # TODO: tune this
         self.steps = 0
 
     def act(self, observation: gym.spaces.Box) -> gym.spaces.Discrete:
@@ -136,6 +136,9 @@ class Agent:
         terminated: bool,
         truncated: bool,
     ) -> None:
+        """
+        Learn from the given observation, reward, and termination signal.
+        """
         if self.prev_observation is not None:
             self.buffer.add(
                 (
