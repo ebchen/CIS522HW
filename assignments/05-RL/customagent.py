@@ -90,12 +90,8 @@ class Agent:
         self.target_model = DQN(observation_space.shape[0], action_space.n).to(
             self.device
         )
-        # self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
-        # self.loss_fn = nn.MSELoss()
-        # # self.buffer = deque(maxlen=200000)  # TODO: tune this
-        # self.buffer = PrioritizedReplayBuffer(20000)
 
-        self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
+        self.optimizer = optim.Adam(self.model.parameters(), lr=5e-3)
         self.lr_scheduler = optim.lr_scheduler.StepLR(
             self.optimizer, step_size=1000, gamma=0.95
         )
@@ -104,11 +100,11 @@ class Agent:
         self.gradient_clip = 1.0
 
         self.gamma = 0.99
-        self.batch_size = 256  # TODO: tune this
+        self.batch_size = 512  # TODO: tune this
         self.epsilon = 1.0
-        self.epsilon_decay = 0.995  # TODO: tune this
+        self.epsilon_decay = 0.99  # TODO: tune this
         self.epsilon_min = 0.03
-        self.update_freq = 50  # TODO: tune this
+        self.update_freq = 100  # TODO: tune this
         self.steps = 0
 
     def act(self, observation: gym.spaces.Box) -> gym.spaces.Discrete:
