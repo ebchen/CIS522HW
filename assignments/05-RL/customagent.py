@@ -47,13 +47,13 @@ class DQN(nn.Module):
         """
         super(DQN, self).__init__()
         self.fc = nn.Sequential(
-            nn.Linear(input_dim, 512),
+            nn.Linear(input_dim, 256),
             nn.ReLU(),
-            nn.Linear(512, 512),
+            nn.Linear(256, 256),
             nn.ReLU(),
-            nn.Linear(512, 256),
+            nn.Linear(256, 128),
             nn.ReLU(),
-            nn.Linear(256, output_dim),
+            nn.Linear(128, output_dim),
         )
 
         for layer in self.fc:
@@ -90,15 +90,24 @@ class Agent:
         self.target_model = DQN(observation_space.shape[0], action_space.n).to(
             self.device
         )
+        # self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
+        # self.loss_fn = nn.MSELoss()
+        # # self.buffer = deque(maxlen=200000)  # TODO: tune this
+        # self.buffer = PrioritizedReplayBuffer(20000)
+
         self.optimizer = optim.Adam(self.model.parameters(), lr=1e-3)
+        self.lr_scheduler = optim.lr_scheduler.StepLR(
+            self.optimizer, step_size=1000, gamma=0.95
+        )
         self.loss_fn = nn.MSELoss()
-        # self.buffer = deque(maxlen=200000)  # TODO: tune this
-        self.buffer = PrioritizedReplayBuffer(200000)
+        self.buffer = PrioritizedReplayBuffer(20000)
+        self.gradient_clip = 1.0
+
         self.gamma = 0.99
-        self.batch_size = 256  # TODO: tune this
+        self.batch_size = 128  # TODO: tune this
         self.epsilon = 1.0
-        self.epsilon_decay = 0.9995  # TODO: tune this
-        self.epsilon_min = 0.05
+        self.epsilon_decay = 0.995  # TODO: tune this
+        self.epsilon_min = 0.03
         self.update_freq = 500  # TODO: tune this
         self.steps = 0
 
@@ -127,10 +136,6 @@ class Agent:
         terminated: bool,
         truncated: bool,
     ) -> None:
-        """
-        Update the agent.
-        """
-
         if self.prev_observation is not None:
             self.buffer.add(
                 (
@@ -156,28 +161,6 @@ class Agent:
             importance_weights, device=self.device, dtype=torch.float32
         ).unsqueeze(1)
 
-        # batch = random.sample(self.buffer, self.batch_size)
-        obs, action, reward, next_obs, done = zip(*batch)
-        obs = torch.tensor(obs, dtype=torch.float32, device=self.device)
-        action = torch.tensor(action, dtype=torch.long, device=self.device).view(-1, 1)
-        reward = torch.tensor(reward, dtype=torch.float32, device=self.device)
-        next_obs = torch.tensor(next_obs, dtype=torch.float32, device=self.device)
-        done = torch.tensor(done, dtype=torch.float32, device=self.device)
-
-        q_values = self.model(obs).gather(1, action)
-        target_q_values = (
-            self.target_model(next_obs).max(dim=1, keepdim=True)[0].detach()
-        )
-        target_q_values = reward + self.gamma * target_q_values * (1 - done)
-
-        loss = self.loss_fn(q_values, target_q_values)
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
-
-        self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
-
-        # Double DQN
         states, actions, rewards, next_states, dones = zip(*batch)
         states = torch.tensor(states, dtype=torch.float32, device=self.device)
         actions = torch.tensor(
@@ -202,17 +185,14 @@ class Agent:
 
         self.optimizer.zero_grad()
         loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.gradient_clip)
         self.optimizer.step()
 
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
+        self.lr_scheduler.step()
 
         # Calculate TD errors
         td_errors = (target_q_values - q_values).squeeze().detach().cpu().numpy()
         # Update priorities
         new_priorities = np.abs(td_errors) + 1e-5
         self.buffer.update_priorities(indices, new_priorities)
-
-        # loss = self.loss_fn(q_values, target_q_values.detach())
-        # self.optimizer.zero_grad()
-        # loss.backward()
-        # self.optimizer.step()

@@ -6,7 +6,7 @@
 import gymnasium as gym
 from customagent import Agent
 
-SHOW_ANIMATIONS = True
+SHOW_ANIMATIONS = False
 
 env = gym.make("LunarLander-v2", render_mode="human" if SHOW_ANIMATIONS else "none")
 observation, info = env.reset(seed=42)
@@ -30,11 +30,11 @@ for ep in range(100000):
         n = min(30, len(last_n_rewards))
         avg = sum(last_n_rewards[-n:]) / n
         improvement_emoji = "🔥" if (total_reward > avg) else "😢"
-        # print(
-        #     f"{improvement_emoji} Step {ep}: Finished with reward {int(total_reward)}.\tAvg of last {n}: {int(avg)}"
-        # )
-        # if avg > 0:
-        #     print("🎉 Nice work! You're ready to submit the leaderboard! 🎉")
+        print(
+            f"{improvement_emoji} Step {ep}: Finished with reward {int(total_reward)}.\tAvg of last {n}: {int(avg)}"
+        )
+        if avg > 0:
+            print("🎉 Nice work! You're ready to submit the leaderboard! 🎉")
         total_reward = 0
 
 env.close()
